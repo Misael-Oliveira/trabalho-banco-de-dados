@@ -1,1 +1,72 @@
+1. Tabela: fabricantes
+Marcas que fabricam as peças (ex: Bosch, Magneti Marelli, Metalleve).
 
+id_fabricante (INT) — PK (Primary Key)
+
+nome_fabricante (VARCHAR(100)) — Não Nulo / Único
+
+2. Tabela: pecas
+O catálogo de autopeças em si.
+
+id_peca (INT) — PK
+
+id_fabricante (INT) — FK (Foreign Key) referenciando fabricantes
+
+codigo_original (VARCHAR(50)) — Código do fabricante (Não Nulo / Único)
+
+nome_peca (VARCHAR(150)) — Não Nulo
+
+descricao (TEXT)
+
+preco_venda (DECIMAL(10,2)) — Não Nulo
+
+estoque_atual (INT) — Não Nulo (Padrão: 0)
+
+3. Tabela: veiculos
+Cadastro de carros para cruzar com a compatibilidade das peças.
+
+id_veiculo (INT) — PK
+
+marca (VARCHAR(50)) — Ex: Fiat, Volkswagen (Não Nulo)
+
+modelo (VARCHAR(50)) — Ex: Palio, Gol (Não Nulo)
+
+ano_inicio (INT) — Ano inicial do modelo (Não Nulo)
+
+ano_fim (INT) — Ano final do modelo
+
+motorizacao (VARCHAR(20)) — Ex: 1.0 8V, 2.0 TSi
+
+4. Tabela: compatibilidade (Tabela Associativa N:N)
+Diz exatamente qual peça serve em qual carro.
+
+id_peca (INT) — PK / FK referenciando pecas
+
+id_veiculo (INT) — PK / FK referenciando veiculos
+
+5. Tabela: clientes
+id_cliente (INT) — PK
+
+nome (VARCHAR(100)) — Não Nulo
+
+cpf_cnpj (VARCHAR(14)) — Não Nulo / Único
+
+telefone (VARCHAR(20))
+
+6. Tabela: pedidos (Vendas)
+id_pedido (INT) — PK
+
+id_cliente (INT) — FK referenciando clientes
+
+data_pedido (TIMESTAMP) — Não Nulo
+
+valor_total (DECIMAL(10,2)) — Não Nulo
+
+7. Tabela: itens_pedido (Tabela Associativa N:N)
+id_pedido (INT) — PK / FK referenciando pedidos
+
+id_peca (INT) — PK / FK referenciando pecas
+
+quantidade (INT) — Não Nulo
+
+preco_unitario_historico (DECIMAL(10,2)) — Preço cobrado no momento da venda
