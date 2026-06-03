@@ -1,1 +1,9 @@
+Fabricantes (1) ---- (N) Peças: Um fabricante pode ter várias peças cadastradas.
 
+Peças (N) ---- (M) Veículos: Uma peça pode servir para muitos carros, e um carro aceita muitas peças. 
+(Resolvido pela tabela compatibilidade).
+
+Clientes (1) ---- (N) Pedidos: Um cliente pode realizar várias compras na loja.
+
+Pedidos (N) ---- (M) Peças: Um pedido leva várias peças, e uma peça pode ser vendida em vários pedidos diferentes. 
+(Resolvido pela tabela itens_pedido).
