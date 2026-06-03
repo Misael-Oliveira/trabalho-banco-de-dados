@@ -1,0 +1,78 @@
+-- 1. TABELA FABRICANTES
+CREATE TABLE fabricantes (
+    id_fabricante INT NOT NULL,
+    nome_fabricante VARCHAR(100) NOT NULL,
+    CONSTRAINT pk_fabricantes PRIMARY KEY (id_fabricante),
+    CONSTRAINT un_nome_fabricante UNIQUE (nome_fabricante)
+);
+
+-- 2. TABELA PEÇAS
+CREATE TABLE pecas (
+    id_peca INT NOT NULL,
+    id_fabricante INT NOT NULL,
+    codigo_original VARCHAR(50) NOT NULL,
+    nome_peca VARCHAR(150) NOT NULL,
+    descricao TEXT,
+    preco_venda DECIMAL(10,2) NOT NULL,
+    estoque_atual INT DEFAULT 0 NOT NULL,
+    CONSTRAINT pk_pecas PRIMARY KEY (id_peca),
+    CONSTRAINT un_codigo_original UNIQUE (codigo_original),
+    CONSTRAINT fk_pecas_fabricantes FOREIGN KEY (id_fabricante)
+        REFERENCES fabricantes (id_fabricante)
+);
+
+-- 3. TABELA VEÍCULOS
+CREATE TABLE veiculos (
+    id_veiculo INT NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    ano_inicio INT NOT NULL,
+    ano_fim INT,
+    motorizacao VARCHAR(20),
+    CONSTRAINT pk_veiculos PRIMARY KEY (id_veiculo)
+);
+
+-- 4. TABELA ASSOCIATIVA: COMPATIBILIDADE (PEÇA X VEÍCULO)
+CREATE TABLE compatibilidade (
+    id_peca INT NOT NULL,
+    id_veiculo INT NOT NULL,
+    CONSTRAINT pk_compatibilidade PRIMARY KEY (id_peca, id_veiculo),
+    CONSTRAINT fk_compat_pecas FOREIGN KEY (id_peca)
+        REFERENCES pecas (id_peca) ON DELETE CASCADE,
+    CONSTRAINT fk_compat_veiculos FOREIGN KEY (id_veiculo)
+        REFERENCES veiculos (id_veiculo) ON DELETE CASCADE
+);
+
+-- 5. TABELA CLIENTES
+CREATE TABLE clientes (
+    id_cliente INT NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    cpf_cnpj VARCHAR(14) NOT NULL,
+    telefone VARCHAR(20),
+    CONSTRAINT pk_clientes PRIMARY KEY (id_cliente),
+    CONSTRAINT un_cliente_doc UNIQUE (cpf_cnpj)
+);
+
+-- 6. TABELA PEDIDOS
+CREATE TABLE pedidos (
+    id_pedido INT NOT NULL,
+    id_cliente INT NOT NULL,
+    data_pedido TIMESTAMP NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL,
+    CONSTRAINT pk_pedidos PRIMARY KEY (id_pedido),
+    CONSTRAINT fk_pedidos_clientes FOREIGN KEY (id_cliente)
+        REFERENCES clientes (id_cliente)
+);
+
+-- 7. TABELA ASSOCIATIVA: ITENS DO PEDIDO
+CREATE TABLE itens_pedido (
+    id_pedido INT NOT NULL,
+    id_peca INT NOT NULL,
+    quantidade INT NOT NULL,
+    preco_unitario_historico DECIMAL(10,2) NOT NULL,
+    CONSTRAINT pk_itens_pedido PRIMARY KEY (id_pedido, id_peca),
+    CONSTRAINT fk_itens_pedidos FOREIGN KEY (id_pedido)
+        REFERENCES pedidos (id_pedido) ON DELETE CASCADE,
+    CONSTRAINT fk_itens_pecas FOREIGN KEY (id_peca)
+        REFERENCES pecas (id_peca)
+);
