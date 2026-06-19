@@ -1,40 +1,37 @@
 -- Criando o Schema/Database se não existir
-CREATE DATABASE IF NOT EXISTS loja_autopecas;
+DROP DATABASE IF EXISTS loja_autopecas;
+
+CREATE DATABASE loja_autopecas;
 USE loja_autopecas;
 
 -- 1. TABELA FABRICANTES
 CREATE TABLE fabricantes (
-    id_fabricante INT AUTO_INCREMENT,
-    nome_fabricante VARCHAR(100) NOT NULL,
-    CONSTRAINT pk_fabricantes PRIMARY KEY (id_fabricante),
-    CONSTRAINT un_nome_fabricante UNIQUE (nome_fabricante)
-) ENGINE=InnoDB;
+    id_fabricante INT PRIMARY KEY AUTO_INCREMENT,
+    nome_fabricante VARCHAR(100) NOT NULL UNIQUE
+);
 
 -- 2. TABELA PEÇAS
 CREATE TABLE pecas (
-    id_peca INT AUTO_INCREMENT,
+    id_peca INT PRIMARY KEY AUTO_INCREMENT,
     id_fabricante INT NOT NULL,
-    codigo_original VARCHAR(50) NOT NULL,
+    codigo_original VARCHAR(50) NOT NULL UNIQUE,
     nome_peca VARCHAR(150) NOT NULL,
     descricao TEXT,
     preco_venda DECIMAL(10,2) NOT NULL,
-    estoque_atual INT DEFAULT 0 NOT NULL,
-    CONSTRAINT pk_pecas PRIMARY KEY (id_peca),
-    CONSTRAINT un_codigo_original UNIQUE (codigo_original),
+    estoque_atual INT DEFAULT (0) NOT NULL,
     CONSTRAINT fk_pecas_fabricantes FOREIGN KEY (id_fabricante)
         REFERENCES fabricantes (id_fabricante)
-) ENGINE=InnoDB;
+);
 
 -- 3. TABELA VEÍCULOS
 CREATE TABLE veiculos (
-    id_veiculo INT AUTO_INCREMENT,
+    id_veiculo INT PRIMARY KEY AUTO_INCREMENT,
     marca VARCHAR(50) NOT NULL,
     modelo VARCHAR(50) NOT NULL,
     ano_inicio INT NOT NULL,
     ano_fim INT,
-    motorizacao VARCHAR(20),
-    CONSTRAINT pk_veiculos PRIMARY KEY (id_veiculo)
-) ENGINE=InnoDB;
+    motorizacao VARCHAR(20)
+);
 
 -- 4. TABELA ASSOCIATIVA: COMPATIBILIDADE (PEÇA X VEÍCULO)
 CREATE TABLE compatibilidade (
@@ -45,28 +42,25 @@ CREATE TABLE compatibilidade (
         REFERENCES pecas (id_peca) ON DELETE CASCADE,
     CONSTRAINT fk_compat_veiculos FOREIGN KEY (id_veiculo)
         REFERENCES veiculos (id_veiculo) ON DELETE CASCADE
-) ENGINE=InnoDB;
+);
 
 -- 5. TABELA CLIENTES
 CREATE TABLE clientes (
-    id_cliente INT AUTO_INCREMENT,
+    id_cliente INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    cpf_cnpj VARCHAR(14) NOT NULL,
-    telefone VARCHAR(20),
-    CONSTRAINT pk_clientes PRIMARY KEY (id_cliente),
-    CONSTRAINT un_cliente_doc UNIQUE (cpf_cnpj)
-) ENGINE=InnoDB;
+    cpf_cnpj VARCHAR(14) NOT NULL UNIQUE,
+    telefone VARCHAR(20)
+);
 
 -- 6. TABELA PEDIDOS
 CREATE TABLE pedidos (
-    id_pedido INT AUTO_INCREMENT,
+    id_pedido INT PRIMARY KEY AUTO_INCREMENT,
     id_cliente INT NOT NULL,
     data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valor_total DECIMAL(10,2) NOT NULL,
-    CONSTRAINT pk_pedidos PRIMARY KEY (id_pedido),
     CONSTRAINT fk_pedidos_clientes FOREIGN KEY (id_cliente)
         REFERENCES clientes (id_cliente)
-) ENGINE=InnoDB;
+);
 
 -- 7. TABELA ASSOCIATIVA: ITENS DO PEDIDO
 CREATE TABLE itens_pedido (
@@ -79,4 +73,4 @@ CREATE TABLE itens_pedido (
         REFERENCES pedidos (id_pedido) ON DELETE CASCADE,
     CONSTRAINT fk_itens_pecas FOREIGN KEY (id_peca)
         REFERENCES pecas (id_peca)
-) ENGINE=InnoDB;
+);
